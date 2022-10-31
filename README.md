@@ -1,7 +1,7 @@
 # servicenowtest
 The rqurement for this test were just a one liner, so I made some asumptions. The assumptions follows below.
 1. The weights for the 3 properties stranger_friendly, dog_friendly and child_friendly has the highest value of 5 and lowest of 1.
-2. We have to not look at the property wights in the data.
+2. We have to not look at the property 'weight' in the data.
 3. All the properties have one weight value between 1 and 5 each.
 
 
