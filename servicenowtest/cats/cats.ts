@@ -1,5 +1,5 @@
+import express from "express";
 import { CatService } from '../services/catService';
-const express = require("express");
 const router = express.Router();
 
 
