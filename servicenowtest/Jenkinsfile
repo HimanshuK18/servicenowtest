@@ -1,36 +1,52 @@
 pipeline {
     agent any
-    options {
-        skipStagesAfterUnstable()
+    environment {
+        AWS_ACCOUNT_ID="350687266438"
+        AWS_DEFAULT_REGION="ap-northeast-1"
+        IMAGE_REPO_NAME="testing"
+        IMAGE_TAG="v1"
+        REPOSITORY_URI = "public.ecr.aws/q9j0m8g2/testing"
     }
+   
     stages {
-         stage('Clone repository') { 
-            steps { 
-                script{
-                checkout scm
-                }
-            }
-        }
-        stage('Build') { 
-            steps { 
-                script{
-                 app = docker.build("underwater")
-                }
-            }
-        }
-        stage('Test'){
+        
+         stage('Logging into AWS ECR') {
             steps {
-                 echo 'Empty'
+                script {
+                sh """aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"""
+                }
+                 
             }
         }
-        stage('Deploy') {
+        
+        stage('Cloning Git') {
             steps {
-                script{
-                        docker.withRegistry('https://720766170633.dkr.ecr.us-east-2.amazonaws.com', 'ecr:us-east-2:aws-credentials') {
-                    app.push("${env.BUILD_NUMBER}")
-                    app.push("latest")
-                    }
-                }
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '', url: 'https://github.com/HimanshuK18/servicenowtest.git']]])     
+            }
+        }
+  
+    // Building Docker images
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+        }
+      }
+    }
+   
+    // Uploading Docker images into AWS ECR
+    stage('Pushing to ECR') {
+     steps{  
+         script {
+                sh """docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:$IMAGE_TAG"""
+                sh """docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"""
+         }
+        }
+      }
+    // it reads from deployment.yml and do the deployment 
+      stage('Deploy To EKS'){
+            steps {
+                 sh 'kubectl apply -f deployment.yml'
             }
         }
     }

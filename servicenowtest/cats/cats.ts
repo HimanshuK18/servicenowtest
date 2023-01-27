@@ -1,5 +1,6 @@
 import express from "express";
 import { CatService } from '../services/catService';
+import { send } from '../SNS/produceSNSTopic';
 const router = express.Router();
 
 
@@ -19,8 +20,16 @@ router.get("/search", async (req: any, res: any) => {
         res.send("Something went wrong.");
     }
 
-
 });
+
+router.get("/status", async (req, res) => {
+    const sns = await send();
+    console.log(sns + "_______________");
+    res.status(200).json({
+      status: "ok",
+      data: sns,
+    });
+  });
 
 function filterData(data: any): any {
     console.log(`filter data and select top five`);

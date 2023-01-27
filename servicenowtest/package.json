@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
-    "start": "node dist/index.js",
+    "start": "npm run build && node dist/index.js",
     "start_gql": "node dist/graphQLServer/server.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
     "start_test": "node test.js",
@@ -18,7 +18,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-sns": "^3.257.0",
     "apollo-server": "^3.11.1",
+    "aws-sdk": "^2.1301.0",
     "axios": "^0.21.1",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
