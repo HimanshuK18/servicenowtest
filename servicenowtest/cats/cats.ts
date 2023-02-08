@@ -31,6 +31,23 @@ router.get("/status", async (req, res) => {
     });
   });
 
+  router.get("/test", function (req, res) {
+    let n = 900000000000000000;
+    let count = 0;
+   
+    if (n > 50000000000) n = 50000000000;
+   
+    for (let i = 0; i <= n; i++) {
+      count += i;
+    }
+   
+    res.send(`Final count is ${count}`);
+  });
+
+  router.get("/hello", (req, res) => {
+    res.send("Hello World!");
+  });
+
 function filterData(data: any): any {
     console.log(`filter data and select top five`);
     let strangerMaxWeight: number = 0;

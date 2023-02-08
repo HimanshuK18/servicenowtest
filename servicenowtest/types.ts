@@ -1,8 +1,8 @@
 //javascript object 
 const car = { type: "Fiat", model: "500", color: "white" };
-//typescript onject
-const carType: { type: string, model: string, year: number } = {
-    type: "Toyota",
+//typescript object
+const carType: { typeCar: string, model: string, year: number } = {
+    typeCar: "Toyota",
     model: "Corolla",
     year: 2009
 };

@@ -7,7 +7,6 @@ pipeline {
         IMAGE_TAG="v1"
         REPOSITORY_URI = "public.ecr.aws/q9j0m8g2/testing"
     }
-   
     stages {
         
          stage('Logging into AWS ECR') {
@@ -24,6 +23,16 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '', url: 'https://github.com/HimanshuK18/servicenowtest.git']]])     
             }
         }
+        // Run unit test cases
+        stage('Test'){
+         env.NODE_ENV = "test"
+         print "Environment will be : ${env.NODE_ENV}"
+         sh 'node -v'
+         sh 'npm prune'
+         sh 'npm install'
+         sh 'npm build'
+         sh 'npm test'
+       }
   
     // Building Docker images
     stage('Building image') {

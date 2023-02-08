@@ -1,3 +1,20 @@
+const n ="";
+console.log(isNaN(n));
+
+
+var add = (function () {
+    var counter = 0;
+    return () => { 
+        console.log(this); 
+        return counter += 1;
+     }
+})();
+var add1 = add();
+var add2 = add();
+var add23 = add();
+var add24 = add();
+
+
 console.log("got it");
 var a = "42";
 var b = 42;
@@ -5,7 +22,7 @@ var b = 42;
 let ob = {
     "FName": "sss",
     "LName": "Sdhgsdh",
-    "age": 33 
+    "age": 33
 };
 delete ob.age;
 
@@ -34,8 +51,16 @@ function* makeRangeIterator(start = 0, end = Infinity, step = 1) {
 }
 
 // a void function return an unfedined type
-function sayHi() { 
-    console.log('Hi!')
+function CallHi()
+{
+    var tt ="pp"
+    sayHi(); 
+}
+CallHi();
+function sayHi() {
+    var w = "ss";
+    console.log(this);
+    console.log('Hi!');
 }
 
 let speech = sayHi();
@@ -44,20 +69,20 @@ console.log(speech); // undefined
 function outer() {
     var b = 10;
     function inner() {
-         
-          var a = 20; 
-          console.log("a= " + a + " b= " + b);
-         a++;
-         b++;
-     }
+
+        var a = 20;
+        console.log("a= " + a + " b= " + b);
+        a++;
+        b++;
+    }
     return inner;
- }
- outer();
+}
+outer();
 
 var X = outer(); //outer() invoked the first time
 var Y = outer(); //outer() invoked the second time
-console.log(typeof(X)); //X is of type function
-console.log(typeof(Y)); //Y is of type function
+console.log(typeof (X)); //X is of type function
+console.log(typeof (Y)); //Y is of type function
 
 X(); // X() invoked the first time
 X(); // X() invoked the second time

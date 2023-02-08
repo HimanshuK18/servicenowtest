@@ -2,7 +2,7 @@
 FROM node:16-alpine
 #The RUN statement will allow us to execute a command for anything you want to do. 
 #We created a subdirectory /usr/src/app that will hold our application code within the docker image.
-#RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/src/app
 ENV NODE_ENV production
 #WORKDIR instruction establishes the subdirectory we created as the working directory for any RUN, 
 #CMD, ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile.
