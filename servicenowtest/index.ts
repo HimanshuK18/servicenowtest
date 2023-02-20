@@ -1,16 +1,56 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import { LexRuntime } from 'aws-sdk';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
+import options from './spec/options';
+import swaggerDocument from './spec/swagger.json';
+
+
 dotenv.config();
 const cluster = require("cluster");
 const totalCPUs = require("os").cpus().length;
 const fetch = require('node-fetch');
-const NodeCache = require('node-cache');
+//const NodeCache = require('node-cache');
 const redis = require('redis');
 const { promisify } = require('util');
+//const myCache = new NodeCache({ stdTTL: 600 });
 
-const myCache = new NodeCache({ stdTTL: 600 });
 
+const router = express.Router();
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
+dotenv.config();
+
+const app: Express = express();
+const port = process.env.PORT || 3000;
+const specs = swaggerJsdoc(options);
+
+
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+const myLogger = function (req: any, res: any, next: () => void) {
+  console.log('LOGGED by middle ware' + req + res)
+  next();
+};
+const child_process = require('child_process');
+app.use(myLogger);
+child_process.exec('node_support.js');
+
+app.listen(port, () => {
+  console.log(`App is running at https://localhost:${port}`);
+});
+const catsRoutes = require("./cats/cats");
+app.use("/cats", catsRoutes);
+
+
+/*
 if (cluster.isMaster) {
   console.log(`Number of CPUs is ${totalCPUs}`);
   console.log(`Master ${process.pid} is running`);
@@ -49,32 +89,4 @@ if (cluster.isMaster) {
   app.listen(3000, () => {
     console.log(`App listening on port ${3000}`);
   });
-}
-
-/*const router = express.Router();
-const bodyParser = require('body-parser');
-const cors = require('cors');
-
-dotenv.config();
-
-const app: Express = express();
-const port = process.env.PORT || 3000;
-
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-const myLogger = function (req: any, res: any, next: () => void) {
-  console.log('LOGGED by middle ware' + req + res)
-  next();
-};
-const child_process = require('child_process');
-app.use(myLogger);
-child_process.exec('node_support.js');
-
-app.listen(port, () => {
-  console.log(`Server is running at https://localhost:${port}`);
-});
-const catsRoutes = require("./cats/cats");
-app.use("/cats", catsRoutes);
-*/
+}*/
