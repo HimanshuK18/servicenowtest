@@ -1,5 +1,6 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv';
+import { LexRuntime } from 'aws-sdk';
 dotenv.config();
 const cluster = require("cluster");
 const totalCPUs = require("os").cpus().length;

@@ -6,6 +6,7 @@ RUN mkdir -p /usr/src/app
 ENV NODE_ENV production
 #WORKDIR instruction establishes the subdirectory we created as the working directory for any RUN, 
 #CMD, ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile.
+# The ENV instruction sets the environment variable <key> to the value <value>.
 WORKDIR /usr/src/app
 #lets us copy files from a source to a destination. We copied the contents of our node application code
 # from our current directory to the working directory in our docker image
