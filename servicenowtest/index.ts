@@ -7,7 +7,6 @@ import options from './spec/options';
 import swaggerDocument from './spec/swagger.json';
 
 
-dotenv.config();
 const cluster = require("cluster");
 const totalCPUs = require("os").cpus().length;
 const fetch = require('node-fetch');
@@ -17,7 +16,7 @@ const { promisify } = require('util');
 //const myCache = new NodeCache({ stdTTL: 600 });
 
 
-const router = express.Router();
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
