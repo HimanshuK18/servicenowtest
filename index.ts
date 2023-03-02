@@ -16,14 +16,13 @@ const { promisify } = require('util');
 //const myCache = new NodeCache({ stdTTL: 600 });
 
 
-
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 const specs = swaggerJsdoc(options);
 
 
@@ -85,7 +84,7 @@ if (cluster.isMaster) {
     res.send(`Final count is ${count}`);
   });
  
-  app.listen(3000, () => {
-    console.log(`App listening on port ${3000}`);
+  app.listen(4000, () => {
+    console.log(`App listening on port ${4000}`);
   });
 }*/

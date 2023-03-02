@@ -13,8 +13,8 @@ WORKDIR /usr/src/app
 COPY --chown=node:node . .
 RUN npm ci --only=production
 # The EXPOSE instruction informs Docker that the container listens on the specified
-# network ports at runtime. We specified port 3000.
-EXPOSE 3000
+# network ports at runtime. We specified port 4000.
+EXPOSE 4000
 #USER Dockerfile directive only ensures that the process is owned by the node user.Security enhancement
 #USER node
 # statement specifies the command to start our application. This tells Docker how to run your application. Here we use node server.js which is typically how files are run in Node.js.
