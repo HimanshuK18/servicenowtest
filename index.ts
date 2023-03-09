@@ -44,9 +44,17 @@ child_process.exec('node_support.js');
 app.listen(port, () => {
   console.log(`App is running at https://localhost:${port}`);
 });
-const catsRoutes = require("./cats/cats");
-app.use("/cats", catsRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Hello My World!');
+});
+
+
+import { router } from "./cats/cats";
+app.use("/cats", router);
+
+import { usersController } from "./controllers/usersController";
+app.use("/test", usersController);
 
 /*
 if (cluster.isMaster) {

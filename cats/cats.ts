@@ -3,7 +3,7 @@ import { CatService } from '../services/catService';
 import { send } from '../SNS/produceSNSTopic';
 import EventEmitter from 'events';
 
-const router = express.Router();
+export const router = express.Router();
 const em = new EventEmitter();
 
 
@@ -131,6 +131,3 @@ function filterDataByWeight(data: any, strangerMaxWeight: number, childMaxWeight
     });
     return newData
 }
-
-
-module.exports = router;
