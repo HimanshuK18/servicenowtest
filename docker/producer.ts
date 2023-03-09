@@ -21,33 +21,20 @@ const consumer = new kafka.Consumer(
         { topic: topics[0].topic, partition: 0 }, { topic: 't1', partition: 1 }
     ],
     {
-        autoCommit: false
+        autoCommit: true,// if it is false we have write code to auto commit
+        autoCommitIntervalMs: 5000
     }
 );
 
 consumer.on("message", function (message: any) {
-
-    // Read string into a buffer.
     var buf = new Buffer(message.value, "binary");
     var decodedMessage = JSON.parse(buf.toString());
-
-    //Events is a Sequelize Model Object. 
-    return Event.create({
+   /* return Event.create({
         id: decodedMessage.id,
         type: decodedMessage.type,
         userId: decodedMessage.userId,
         sessionId: decodedMessage.sessionId,
         data: JSON.stringify(decodedMessage.data),
         createdAt: new Date()
-    });
-});
-
-consumer.on("error", function (err) {
-    console.log("error", err);
-});
-
-process.on("SIGINT", function () {
-    consumer.close(true, function () {
-        process.exit();
-    });
+    });*/
 });

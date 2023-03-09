@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
-    "start": "npm run build && nodemon -q dist/index.js",
+    "start": "npm run build && nodemon -x dist/index.js",
     "start_gql": "node dist/graphQLServer/server.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js",
     "start_test": "node test.js",

@@ -1,7 +1,10 @@
 import express from "express";
 import { CatService } from '../services/catService';
 import { send } from '../SNS/produceSNSTopic';
+import EventEmitter from 'events';
+
 const router = express.Router();
+const em = new EventEmitter();
 
 
 router.get("/search", async (req: any, res: any) => {
@@ -26,27 +29,56 @@ router.get("/status", async (req, res) => {
     const sns = await send();
     console.log(sns + "_______________");
     res.status(200).json({
-      status: "ok",
-      data: sns,
+        status: "ok",
+        data: sns,
     });
-  });
+});
 
-  router.get("/test", function (req, res) {
+router.get("/test", function (req, res) {
     let n = 900000000000000000;
     let count = 0;
-   
-    if (n > 50000000000) n = 50000000000;
-   
-    for (let i = 0; i <= n; i++) {
-      count += i;
-    }
-   
-    res.send(`Final count is ${count}`);
-  });
 
-  router.get("/hello", (req, res) => {
+    if (n > 50000000000) n = 50000000000;
+
+    for (let i = 0; i <= n; i++) {
+        count += i;
+    }
+
+    res.send(`Final count is ${count}`);
+});
+
+router.get("/hello", (req, res) => {
+    em.on('FirstEvent', function () {
+        console.log(5);
+        console.log('First subscriber from another function: ');
+    });
+    
+    newEvent();
+    
+    console.log('you arn');
     res.send("Hello World!");
-  });
+});
+
+function newEvent() {
+    console.log(1);
+// added three event listeners 2 of type FirstEvent and third of type second event
+    em.addListener('FirstEvent', function () {
+        console.log(3);
+        console.log('First subscriber: ');
+    });
+    em.on('FirstEvent', function () {
+        console.log(2);
+        console.log('First subscriber: ');
+    });
+    em.on('SecondEvent', function () {
+        console.log(4);
+        console.log('second subscriber: ');
+    });
+    // emit or raised the events of both type once
+    em.emit('FirstEvent', 'This is my first Node.js event emitter example.');
+    em.emit('SecondEvent', 'This is my second Node.js event emitter example.');
+    console.log('count ' + em.listenerCount('FirstEvent'));
+}
 
 function filterData(data: any): any {
     console.log(`filter data and select top five`);
