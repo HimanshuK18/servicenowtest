@@ -5,6 +5,10 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import options from './spec/options';
 import swaggerDocument from './spec/swagger.json';
+import { errorHandler } from './error/error-handler';
+import {ErrorException} from './error/error-exception';
+import { ErrorCode } from './error/error';
+import * as OpenApiValidator from 'express-openapi-validator';
 
 
 const cluster = require("cluster");
@@ -24,7 +28,7 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 4000;
 const specs = swaggerJsdoc(options);
-
+//console.log(require.cache, { depth: Infinity });
 
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -32,6 +36,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+// Set up OpenAPI validator middleware
+
 
 const myLogger = function (req: any, res: any, next: () => void) {
   console.log('LOGGED by middle ware' + req + res)
@@ -49,13 +55,21 @@ app.get('/', (req, res) => {
   res.send('Hello My World!');
 });
 
+app.put('/metro', (req, res) => {
+  res.send('I am metro');
+});
+
+app.get('/throw-unauthenticated', (req, res) => {
+  console.log('error thrown')
+  throw new ErrorException(ErrorCode.Unauthenticated, "thowrn intentionally");
+});
 
 import { router } from "./cats/cats";
 app.use("/cats", router);
 
 import { usersController } from "./controllers/usersController";
 app.use("/test", usersController);
-
+app.use(errorHandler);
 /*
 if (cluster.isMaster) {
   console.log(`Number of CPUs is ${totalCPUs}`);

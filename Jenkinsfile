@@ -7,6 +7,12 @@ pipeline {
         IMAGE_TAG="v1"
         REPOSITORY_URI = "public.ecr.aws/q9j0m8g2/testing"
     }
+    stage('Build Infrastructure') {
+            steps {
+                sh 'npm install aws-sdk'
+                sh 'node AWSCode/deployEC2.js'
+            }
+        }
     stages {
         
          stage('Logging into AWS ECR') {
