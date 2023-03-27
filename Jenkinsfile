@@ -65,4 +65,54 @@ pipeline {
             }
         }
     }
+    stage('Test Postman') {
+      steps {
+        script {
+          // Add code to authenticate with Postman API
+          // Use environment variables to set Postman API credentials
+          // See Postman API documentation for more details
+          
+          // Set Postman collection and environment IDs
+          def collectionId = '<collection_uid>'
+          def environmentId = '<environment_uid>'
+          
+          // Call Postman API to trigger the test run
+          def response = sh(
+            script: "curl -s -X POST -H 'X-Api-Key: ${POSTMAN_API_KEY}' -H 'Content-Type: application/json' -d '{\"collection\":\"${collectionId}\",\"environment\":\"${environmentId}\"}' 'https://api.getpostman.com/runs'",
+            returnStdout: true
+          )
+          
+          // Print the response from the Postman API
+          echo response
+          
+          // Parse the response to get the test run ID
+          def testRunId = sh(
+            script: "echo '${response}' | jq -r '.run.id'",
+            returnStdout: true
+          ).trim()
+          
+          // Wait for the test run to complete
+          def status = ''
+          while (status != 'completed') {
+            def result = sh(
+              script: "curl -s -X GET -H 'X-Api-Key: ${POSTMAN_API_KEY}' 'https://api.getpostman.com/runs/${testRunId}'",
+              returnStdout: true
+            )
+            status = sh(
+              script: "echo '${result}' | jq -r '.run.executions[0].status'",
+              returnStdout: true
+            ).trim()
+            sleep 10
+          }
+          
+          // Print the final test run status
+          echo "Test run completed with status: ${status}"
+          
+          // Fail the build if any test case fails
+          if (status != 'completed') {
+            error "Test run failed with status: ${status}"
+          }
+        }
+      }
+    }
 }

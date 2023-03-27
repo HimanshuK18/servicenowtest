@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_REGISTRY = "your_ecr_url"
+        DOCKERFILE_PATH = "./Dockerfile"
+        AWS_DEFAULT_REGION = "your_aws_region"
+        KUBECONFIG = "/root/.kube/config"
+        EKS_CLUSTER_NAME = "your_eks_cluster_name"
+        EKS_NAMESPACE = "your_eks_namespace"
+    }
+    stages {
+        stage('Clone from Git') {
+            steps {
+                git 'https://github.com/your/repo.git'
+            }
+        }
+        stage('Build Code') {
+            steps {
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+        stage('Run Unit Test Case') {
+            steps {
+                sh 'npm test'
+            }
+        }
+        stage('Run eslint') {
+            steps {
+                sh 'npm run eslint'
+            }
+        }
+        stage('Create Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry("${DOCKER_REGISTRY}", "ecr:us-east-1") {
+                        def customImage = docker.build("your_image_name", "--build-arg NODE_ENV=production --build-arg APP_PORT=8080 --file ${DOCKERFILE_PATH} .")
+                    }
+                }
+            }
+        }
+        stage('Push Docker Image to AWS ECR') {
+            steps {
+                script {
+                    withCredentials([ecrLogin(credentialsId: "aws-ecr-creds", region: "${AWS_DEFAULT_REGION}")]) {
+                        sh "docker push ${DOCKER_REGISTRY}/your_image_name"
+                    }
+                }
+            }
+        }
+        stage('Deploy to AWS EKS') {
+            steps {
+                script {
+                    withCredentials([kubeconfigFile(credentialsId: "aws-kubeconfig-creds", variable: "KUBECONFIG")]) {
+                        sh "kubectl config use-context ${EKS_CLUSTER_NAME}"
+                        sh "kubectl apply -f deployment.yml -n ${EKS_NAMESPACE}"
+                    }
+                }
+            }
+        }
+    }
+}

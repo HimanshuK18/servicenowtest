@@ -1,16 +1,14 @@
-import express, { Express } from 'express';
+import express, { Express, request } from 'express';
 import dotenv from 'dotenv';
 import { LexRuntime } from 'aws-sdk';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import options from './spec/options';
 import swaggerDocument from './spec/swagger.json';
-import { errorHandler } from './error/error-handler';
-import {ErrorException} from './error/error-exception';
-import { ErrorCode } from './error/error';
-import * as OpenApiValidator from 'express-openapi-validator';
+import SwaggerParser from 'swagger-parser';
+import Connect from './database/connection';
 
-
+Connect();
 const cluster = require("cluster");
 const totalCPUs = require("os").cpus().length;
 const fetch = require('node-fetch');
@@ -28,15 +26,15 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 4000;
 const specs = swaggerJsdoc(options);
+
 //console.log(require.cache, { depth: Infinity });
 
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
+// Set up OpenAPI validator middleware
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// Set up OpenAPI validator middleware
 
 
 const myLogger = function (req: any, res: any, next: () => void) {
@@ -59,17 +57,14 @@ app.put('/metro', (req, res) => {
   res.send('I am metro');
 });
 
-app.get('/throw-unauthenticated', (req, res) => {
-  console.log('error thrown')
-  throw new ErrorException(ErrorCode.Unauthenticated, "thowrn intentionally");
-});
 
 import { router } from "./cats/cats";
 app.use("/cats", router);
 
 import { usersController } from "./controllers/usersController";
 app.use("/test", usersController);
-app.use(errorHandler);
+console.log(JSON.stringify(process.env));
+
 /*
 if (cluster.isMaster) {
   console.log(`Number of CPUs is ${totalCPUs}`);
