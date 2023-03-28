@@ -4,7 +4,7 @@ import { send } from '../SNS/produceSNSTopic';
 import EventEmitter from 'events';
 
 export const router = express.Router();
-const em = new EventEmitter();
+export const em = new EventEmitter();
 
 
 router.get("/search", async (req: any, res: any) => {
@@ -52,6 +52,9 @@ router.get("/hello", (req, res) => {
         console.log(5);
         console.log('First subscriber from another function: ');
     });
+    em.on('FirstEvent', 
+    (msg) => 
+    console.log(`Got and ${msg}`));
     
     newEvent();
     

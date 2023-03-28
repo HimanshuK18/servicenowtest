@@ -1,5 +1,7 @@
 import express, { Express, request } from 'express';
 import dotenv from 'dotenv';
+import session from 'express-session';
+import oktaExpress from '@okta/okta-sdk-nodejs';
 import { LexRuntime } from 'aws-sdk';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
@@ -7,19 +9,19 @@ import options from './spec/options';
 import swaggerDocument from './spec/swagger.json';
 import SwaggerParser from 'swagger-parser';
 import Connect from './database/connection';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import cluster from "cluster";
+import redis from 'redis';
+import { promisify } from 'util';
+
 
 Connect();
-const cluster = require("cluster");
 const totalCPUs = require("os").cpus().length;
 const fetch = require('node-fetch');
 //const NodeCache = require('node-cache');
-const redis = require('redis');
-const { promisify } = require('util');
 //const myCache = new NodeCache({ stdTTL: 600 });
 
-
-const bodyParser = require('body-parser');
-const cors = require('cors');
 
 dotenv.config();
 
@@ -35,6 +37,14 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+//okta
+
+app.use(session({
+  secret: 'your-session-secret',
+  resave: true,
+  saveUninitialized: false
+}));
 
 
 const myLogger = function (req: any, res: any, next: () => void) {
@@ -58,11 +68,16 @@ app.put('/metro', (req, res) => {
 });
 
 
-import { router } from "./cats/cats";
-app.use("/cats", router);
+import { router as router2 } from "./cats/cats";
+app.use("/cats", router2);
 
 import { usersController } from "./controllers/usersController";
 app.use("/test", usersController);
+
+import { eventRouter } from "./event/event";
+app.use("/e", eventRouter);
+
+
 console.log(JSON.stringify(process.env));
 
 /*
