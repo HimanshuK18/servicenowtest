@@ -14,6 +14,9 @@ import cors from 'cors';
 import cluster from "cluster";
 import redis from 'redis';
 import { promisify } from 'util';
+import { errorHandler } from './error/error-handler';
+import {ErrorException} from './error/error-exception';
+import { ErrorCode } from './error/error';
 
 
 Connect();
@@ -77,7 +80,7 @@ app.use("/test", usersController);
 import { eventRouter } from "./event/event";
 app.use("/e", eventRouter);
 
-
+app.use(errorHandler);
 console.log(JSON.stringify(process.env));
 
 /*
