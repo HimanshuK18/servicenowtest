@@ -1,0 +1,8 @@
+{
+    "app": "node dist/AWSCode/secret.js",
+    "context": {
+      "aws-cdk:enableDiffNoFail": "true",
+      "aws-cdk:enableStackNameDuplicates": "true"
+    }
+  }
+  

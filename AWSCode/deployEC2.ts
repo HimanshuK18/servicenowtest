@@ -1,6 +1,7 @@
 // Load the AWS SDK
 import AWS from 'aws-sdk';
 
+
 // Set up the AWS configuration
 AWS.config.update({
   region: 'ap-northeast-1', // Replace with your region
