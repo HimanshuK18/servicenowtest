@@ -1,14 +1,14 @@
-/*import AWS from 'aws-sdk';
+import AWS from 'aws-sdk';
 const execSync = require('child_process').execSync;
 
-const eks = new AWS.EKS({ region: 'us-west-2' });
-const ec2 = new AWS.EC2({ region: 'us-west-2' });
+const eks = new AWS.EKS({ region: 'ap-southeast-2' });
+const ec2 = new AWS.EC2({ region: 'ap-southeast-2' });
 
 // create EKS cluster
 async function createCluster() {
   const clusterName = 'my-cluster';
   const nodeGroupName = 'my-node-group';
-  const instanceType = 't3.small';
+  const instanceType = 't2.micro';
   const subnetIds = ['subnet-123456', 'subnet-789012', 'subnet-345678'];
   const securityGroupIds = ['sg-1234567890abcdef'];
 
@@ -93,4 +93,4 @@ users:
   const imageName = 'my-image';
   const imageTag = 'latest';
   const imageUri = `123456789012.dkr.ecr.us-west-2.amazonaws.com/${imageName}:${imageTag}`;
-}*/
+}
